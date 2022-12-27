@@ -1,3 +1,3 @@
 export interface ConfigEntity {
-    BASE_URL: ''
+    BASE_URL: string
 }

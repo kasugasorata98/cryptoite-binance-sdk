@@ -1,4 +1,5 @@
 import axios, { AxiosResponseHeaders, RawAxiosResponseHeaders } from 'axios'
+import configs from '../configs'
 
 function usedWeightLogger(
     headers: RawAxiosResponseHeaders | AxiosResponseHeaders
@@ -19,12 +20,14 @@ function usedWeightLogger(
     headers[sapi1min] && (weights[sapi1min] = headers[sapi1min])
     console.log(weights)
 }
-
+let GLOBAL_API_KEY: string = ''
 const API = (api_key?: string) => {
+    if (api_key) GLOBAL_API_KEY = api_key
+    console.log(configs.BASE_URL)
     const axiosInstance = axios.create({
-        baseURL: 'https://api.binance.com/',
+        baseURL: configs.BASE_URL,
         headers: {
-            'X-MBX-APIKEY': api_key,
+            'X-MBX-APIKEY': GLOBAL_API_KEY,
         },
     })
     console.log('BASE URL: ' + axiosInstance.defaults.baseURL)

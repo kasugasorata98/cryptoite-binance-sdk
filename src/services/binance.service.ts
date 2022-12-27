@@ -1,6 +1,7 @@
-import axios, { Axios } from 'axios'
+import axios, { Axios, AxiosInstance } from 'axios'
 import Config from '../configs'
 import {
+    BinanceAccount,
     BinanceConstructor,
     BinanceExchangeInfo,
 } from '../entities/binance.entity'
@@ -11,7 +12,10 @@ import API from '../api'
 import { ApiEndpoints } from '../api/endpoints'
 
 class BinanceService {
-    constructor(public api_key: string) {}
+    private api: AxiosInstance
+    constructor(api_key: string) {
+        this.api = API(api_key)
+    }
 
     generateSignature(body: { [key: string]: any }, api_secret: string) {
         return CryptoJS.HmacSHA256(
@@ -21,7 +25,12 @@ class BinanceService {
     }
 
     async getSystemStatus() {
-        return await API().get(ApiEndpoints.SYSTEM_STATUS)
+        try {
+            const { data } = await this.api.get(ApiEndpoints.SYSTEM_STATUS)
+            return data
+        } catch (err) {
+            throw err
+        }
     }
 
     async getExchangeInfo(
@@ -36,7 +45,7 @@ class BinanceService {
         const url = symbols
             ? `${ApiEndpoints.EXCHANGE_INFO}?symbols=${symbols}`
             : `${ApiEndpoints.EXCHANGE_INFO}`
-        const res = await API().get(url)
+        const res = await this.api.get(url)
         const exchangeInfo: BinanceExchangeInfo = {
             ...res.data,
             symbols: {},
@@ -65,6 +74,57 @@ class BinanceService {
             exchangeInfo.symbols[obj.symbol] = filters
         }
         return exchangeInfo
+    }
+
+    // remember to add return type
+    async getApiKeyPermissions(api_secret: string, recvWindow: number) {
+        let body:
+            | {
+                  recvWindow: number
+                  timestamp: number
+                  signature?: string
+              }
+            | string = {
+            recvWindow,
+            timestamp: Date.now(),
+        }
+        body['signature'] = this.generateSignature(body, api_secret)
+        body = new URLSearchParams({
+            ...body,
+            recvWindow: body.recvWindow.toString(),
+            timestamp: body.timestamp.toString(),
+        }).toString()
+        return await this.api.get(ApiEndpoints.API_KEY_PERMISSION)
+    }
+
+    async getAccount(
+        api_secret: string,
+        recvWindow: number
+    ): Promise<BinanceAccount> {
+        try {
+            let body:
+                | {
+                      recvWindow: number
+                      timestamp: number
+                      signature?: string
+                  }
+                | string = {
+                recvWindow,
+                timestamp: Date.now(),
+            }
+            body['signature'] = this.generateSignature(body, api_secret)
+            body = new URLSearchParams({
+                ...body,
+                recvWindow: body.recvWindow.toString(),
+                timestamp: body.timestamp.toString(),
+            }).toString()
+            const { data } = await this.api.get<BinanceAccount>(
+                `${ApiEndpoints.ACCOUNT}?${new URLSearchParams(body)}`
+            )
+            return data
+        } catch (err) {
+            throw err
+        }
     }
 }
 
