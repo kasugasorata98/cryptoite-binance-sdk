@@ -18,9 +18,14 @@
   },
   "homepage": "https://github.com/kasugasorata98/pyrobot-binance-sdk#readme",
   "dependencies": {
-    "dotenv": "^16.0.3"
+    "axios": "^1.2.1",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.3",
+    "ws": "^8.11.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18"
+    "@types/crypto-js": "^4.1.1",
+    "@types/node": "^18.11.18",
+    "@types/ws": "^8.5.3"
   }
 }
