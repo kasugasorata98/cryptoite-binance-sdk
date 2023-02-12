@@ -58,3 +58,49 @@ export interface BinanceAccount {
     }>
     permissions: Array<string>
 }
+
+export interface NewMarketOrderRequest {
+    symbol: string
+    side: 'BUY' | 'SELL'
+    type: 'MARKET'
+    quantity?: number
+    quoteOrderQty?: number
+}
+
+export interface NewMarketOrderResponse {
+    symbol: string
+    orderId: number
+    orderListId: number
+    clientOrderId: string
+    transactTime: number
+    price: string
+    origQty: string
+    executedQty: string
+    cummulativeQuoteQty: string
+    status: string
+    timeInForce: TimeInForce['value']
+    type: string
+    side: string
+    workingTime: number
+    files: Array<{
+        price: string
+        qty: string
+        commission: string
+        commissionAsset: string
+        tradeId: number
+    }>
+    selfTradePreventionMode: string
+}
+
+export interface TimeInForce {
+    value: 'GTC' | 'IOC' | 'FOK'
+}
+
+export interface NewLimitOrder {
+    symbol: string
+    side: 'BUY' | 'SELL'
+    type: 'LIMIT'
+    timeInForce: TimeInForce['value']
+    quantity: number
+    price: number
+}

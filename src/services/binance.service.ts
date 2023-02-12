@@ -4,29 +4,26 @@ import {
     BinanceAccount,
     BinanceConstructor,
     BinanceExchangeInfo,
+    NewMarketOrderRequest,
+    NewMarketOrderResponse,
 } from '../entities/binance.entity'
 import { ConfigEntity } from '../entities/config.entity'
 import websocket from 'ws'
-import CryptoJS from 'crypto-js'
+
 import API from '../api'
 import { ApiEndpoints } from '../api/endpoints'
+import Utils from '../utils'
 
 class BinanceService {
     private api: AxiosInstance
-    constructor(api_key: string) {
-        this.api = API(api_key)
-    }
 
-    generateSignature(body: { [key: string]: any }, api_secret: string) {
-        return CryptoJS.HmacSHA256(
-            new URLSearchParams(body).toString(),
-            api_secret
-        ).toString(CryptoJS.enc.Hex)
+    constructor(api_key: string, private api_secret: string) {
+        this.api = API({ api_key, api_secret })
     }
 
     async getSystemStatus() {
         try {
-            const { data } = await this.api.get(ApiEndpoints.SYSTEM_STATUS)
+            const { data } = await this.api.get(ApiEndpoints.SYSTEM_STATUS.path)
             return data
         } catch (err) {
             throw err
@@ -43,8 +40,8 @@ class BinanceService {
             symbols = encodeURIComponent(JSON.stringify(symbols))
         }
         const url = symbols
-            ? `${ApiEndpoints.EXCHANGE_INFO}?symbols=${symbols}`
-            : `${ApiEndpoints.EXCHANGE_INFO}`
+            ? `${ApiEndpoints.EXCHANGE_INFO.path}?symbols=${symbols}`
+            : `${ApiEndpoints.EXCHANGE_INFO.path}`
         const res = await this.api.get(url)
         const exchangeInfo: BinanceExchangeInfo = {
             ...res.data,
@@ -76,50 +73,40 @@ class BinanceService {
         return exchangeInfo
     }
 
-    // remember to add return type
-    async getApiKeyPermissions(api_secret: string, recvWindow: number) {
-        let body:
-            | {
-                  recvWindow: number
-                  timestamp: number
-                  signature?: string
-              }
-            | string = {
-            recvWindow,
-            timestamp: Date.now(),
-        }
-        body['signature'] = this.generateSignature(body, api_secret)
-        body = new URLSearchParams({
-            ...body,
-            recvWindow: body.recvWindow.toString(),
-            timestamp: body.timestamp.toString(),
-        }).toString()
-        return await this.api.get(ApiEndpoints.API_KEY_PERMISSION)
+    async getApiKeyPermissions() {
+        return await this.api.get(`${ApiEndpoints.API_KEY_PERMISSION.path}`)
     }
 
-    async getAccount(
-        api_secret: string,
-        recvWindow: number
-    ): Promise<BinanceAccount> {
+    async getAccount(): Promise<BinanceAccount> {
         try {
-            let body:
-                | {
-                      recvWindow: number
-                      timestamp: number
-                      signature?: string
-                  }
-                | string = {
-                recvWindow,
-                timestamp: Date.now(),
-            }
-            body['signature'] = this.generateSignature(body, api_secret)
-            body = new URLSearchParams({
-                ...body,
-                recvWindow: body.recvWindow.toString(),
-                timestamp: body.timestamp.toString(),
-            }).toString()
             const { data } = await this.api.get<BinanceAccount>(
-                `${ApiEndpoints.ACCOUNT}?${new URLSearchParams(body)}`
+                `${ApiEndpoints.ACCOUNT.path}`
+            )
+            return data
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async newMarketOrder({
+        symbol,
+        side,
+        type,
+        quoteOrderQty,
+        quantity,
+    }: NewMarketOrderRequest): Promise<NewMarketOrderResponse> {
+        try {
+            let body: NewMarketOrderRequest = {
+                symbol: symbol,
+                side,
+                type,
+            }
+            if (quoteOrderQty) body['quoteOrderQty'] = quoteOrderQty
+            if (quantity) body['quantity'] = quantity
+            const { data } = await this.api.post<NewMarketOrderResponse>(
+                `${ApiEndpoints.NEW_ORDER.path}?${new URLSearchParams(
+                    Utils.objectValuesToString(body)
+                )}`
             )
             return data
         } catch (err) {

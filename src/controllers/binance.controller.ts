@@ -4,7 +4,6 @@ import BinanceService from '../services/binance.service'
 class BinanceController {
     private api_key: string
     private api_secret: string
-    private recvWindow: number
     private binanceService: BinanceService
     constructor({
         NODE_ENV,
@@ -12,10 +11,9 @@ class BinanceController {
         api_secret,
         recvWindow = 5000,
     }: BinanceConstructor) {
-        this.binanceService = new BinanceService(api_key)
+        this.binanceService = new BinanceService(api_key, api_secret)
         this.api_key = api_key
         this.api_secret = api_secret
-        this.recvWindow = recvWindow
     }
 
     async getSystemStatus() {
@@ -29,10 +27,7 @@ class BinanceController {
 
     async getApiKeyPermissions() {
         try {
-            return await this.binanceService.getApiKeyPermissions(
-                this.api_secret,
-                this.recvWindow
-            )
+            return await this.binanceService.getApiKeyPermissions()
         } catch (err) {
             console.log(err)
             throw err

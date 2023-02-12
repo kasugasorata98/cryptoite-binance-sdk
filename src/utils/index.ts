@@ -17,6 +17,16 @@ const Utils = {
         const precision = formatter.format(tickSize).split('.')[1].length || 0
         return Number(price).toFixed(precision)
     },
+    objectValuesToString: (object: { [key: string]: any }) => {
+        Object.keys(object).forEach((k) => {
+            if (typeof object[k] === 'object') {
+                return Utils.objectValuesToString(object[k])
+            }
+            object[k] = '' + object[k]
+        })
+
+        return object
+    },
 }
 
 export default Utils

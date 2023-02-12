@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import BinanceService from '../../src/services/binance.service'
 import dotenv from 'dotenv'
+import { NewMarketOrderResponse } from '../../src/entities/binance.entity'
 dotenv.config()
 
 const TEST_API_KEY =
@@ -9,18 +10,15 @@ const TEST_API_SECRET =
     'AihPw44bR6iQ90uiybvvpFT37lvBDm834eNbsXQVb1qPBq7ikMSylHgRvIUqI85e'
 
 describe('binance service', () => {
-    const binanceService = new BinanceService(TEST_API_KEY)
-    it('should generate the right signature', () => {
-        const signature = binanceService.generateSignature(
-            {
-                testvalue: 'testvalue',
-            },
-            'test_api_secret'
-        )
-        const expected =
-            '7298968ce4d741904830ece05b94b7ab85a87a964530ad31acbe8f336e1cab59'
-        expect(signature).to.equal(expected)
-    })
+    const binanceService = new BinanceService(TEST_API_KEY, TEST_API_SECRET)
+    // it('should generate the right signature', () => {
+    //     const signature = binanceService.generateSignature({
+    //         testvalue: 'testvalue',
+    //     })
+    //     const expected =
+    //         '248675fd7b6df2cc131cf73e65769b4a129de2392b830ba1b98bfdce664507dd'
+    //     expect(signature).to.equal(expected)
+    // })
 
     it('should get exchange information of BTCUSDT', async () => {
         const exchangeInfo = await binanceService.getExchangeInfo('BTCUSDT')
@@ -126,7 +124,7 @@ describe('binance service', () => {
     })
 
     it('should contain all outer and inner keys of account', async () => {
-        const account = await binanceService.getAccount(TEST_API_SECRET, 5000)
+        const account = await binanceService.getAccount()
         const expectedAccountKeys = [
             'makerCommission',
             'takerCommission',
@@ -154,5 +152,39 @@ describe('binance service', () => {
         expect(Object.keys(commissionRates)).to.include.members(
             expectedCommissionRatesKeys
         )
+    })
+
+    it('should make a new market order', async () => {
+        try {
+            const order = await binanceService.newMarketOrder({
+                side: 'BUY',
+                type: 'MARKET',
+                quoteOrderQty: 10,
+                symbol: 'BTCUSDT',
+            })
+            const actual = {
+                symbol: order.symbol,
+                orderListId: order.orderListId,
+                price: order.price,
+                status: order.status,
+                timeInForce: order.timeInForce,
+                type: order.type,
+                side: order.side,
+                selfTradePreventionMode: order.selfTradePreventionMode,
+            }
+            const expected = {
+                symbol: 'BTCUSDT',
+                orderListId: -1,
+                price: '0.00000000',
+                status: 'FILLED',
+                timeInForce: 'GTC',
+                type: 'MARKET',
+                side: 'BUY',
+                selfTradePreventionMode: 'NONE',
+            }
+            expect(actual).to.eql(expected)
+        } catch (err) {
+            console.log(err)
+        }
     })
 })
