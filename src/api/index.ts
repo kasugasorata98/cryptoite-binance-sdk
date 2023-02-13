@@ -62,6 +62,7 @@ const API = ({
                     params[key] = value
                 }
             )
+            console.log(params)
             Object.values(ApiEndpoints).forEach((endpointValues) => {
                 if (request?.url) {
                     const path = request.url.split('?')[0]
@@ -75,7 +76,6 @@ const API = ({
                                 params,
                                 api_secret
                             )
-                        console.log(params['signature'])
                         return
                     }
                 }
