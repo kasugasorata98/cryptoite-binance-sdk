@@ -100,7 +100,7 @@ class BinanceService {
     }: NewMarketOrderRequest): Promise<NewMarketOrderResponse> {
         try {
             let body: NewMarketOrderRequest = {
-                symbol: symbol,
+                symbol,
                 side,
                 type,
             }

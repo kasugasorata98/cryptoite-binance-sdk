@@ -162,7 +162,6 @@ describe('binance service', () => {
             quoteOrderQty: 10,
             symbol: 'BTCUSDT',
         })
-
         const actual = {
             symbol: order.symbol,
             orderListId: order.orderListId,
