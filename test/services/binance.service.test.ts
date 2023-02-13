@@ -156,38 +156,34 @@ describe('binance service', () => {
     })
 
     it('should make a new market buy order', async () => {
-        const order = await binanceService
-            .newMarketOrder({
-                side: 'BUY',
-                type: 'MARKET',
-                quoteOrderQty: 10,
-                symbol: 'BTCUSDT',
-            })
-            .then((res) => res)
-            .catch((err) => {
-                console.log(err.response.data)
-            })
-        // const actual = {
-        //     symbol: order.symbol,
-        //     orderListId: order.orderListId,
-        //     price: order.price,
-        //     status: order.status,
-        //     timeInForce: order.timeInForce,
-        //     type: order.type,
-        //     side: order.side,
-        //     selfTradePreventionMode: order.selfTradePreventionMode,
-        // }
-        // const expected = {
-        //     symbol: 'BTCUSDT',
-        //     orderListId: -1,
-        //     price: '0.00000000',
-        //     status: 'FILLED',
-        //     timeInForce: 'GTC',
-        //     type: 'MARKET',
-        //     side: 'BUY',
-        //     selfTradePreventionMode: 'NONE',
-        // }
-        // expect(actual).to.eql(expected)
+        const order = await binanceService.newMarketOrder({
+            side: 'BUY',
+            type: 'MARKET',
+            quoteOrderQty: 10,
+            symbol: 'BTCUSDT',
+        })
+
+        const actual = {
+            symbol: order.symbol,
+            orderListId: order.orderListId,
+            price: order.price,
+            status: order.status,
+            timeInForce: order.timeInForce,
+            type: order.type,
+            side: order.side,
+            selfTradePreventionMode: order.selfTradePreventionMode,
+        }
+        const expected = {
+            symbol: 'BTCUSDT',
+            orderListId: -1,
+            price: '0.00000000',
+            status: 'FILLED',
+            timeInForce: 'GTC',
+            type: 'MARKET',
+            side: 'BUY',
+            selfTradePreventionMode: 'NONE',
+        }
+        expect(actual).to.eql(expected)
     })
 
     // it('should make a new market sell order', async () => {
