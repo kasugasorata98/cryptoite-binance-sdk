@@ -92,11 +92,60 @@ export interface NewMarketOrderResponse {
     selfTradePreventionMode: string
 }
 
+export interface NewLimitOrderResponse {
+    symbol: string
+    orderId: number
+    orderListId: number
+    clientOrderId: string
+    transactTime: number
+    price: string
+    origQty: string
+    executedQty: string
+    cummulativeQuoteQty: string
+    status: string
+    timeInForce: TimeInForce['value']
+    type: string
+    side: string
+    workingTime: number
+    files: Array<{
+        price: string
+        qty: string
+        commission: string
+        commissionAsset: string
+        tradeId: number
+    }>
+    selfTradePreventionMode: string
+}
+
+export interface CancelOrderRequest {
+    symbol: string
+    orderId?: number
+    origClientOrderId?: string
+    newClientOrderId?: string
+}
+
+export interface CancelOrderResponse {
+    symbol: string
+    origClientOrderId: string
+    orderId: number
+    orderListId: number
+    clientOrderId: string
+    price: string
+    origQty: string
+    executedQty: string
+    cummulativeQuoteQty: string
+    status: string
+    timeInForce: TimeInForce['value']
+    type: 'MARKET' | 'LIMIT'
+    side: 'BUY' | 'SELL'
+    selfTradePreventionMode: string
+}
+
 export interface TimeInForce {
     value: 'GTC' | 'IOC' | 'FOK'
 }
 
-export interface NewLimitOrder {
+export interface NewLimitOrderRequest {
     symbol: string
     side: 'BUY' | 'SELL'
     type: 'LIMIT'

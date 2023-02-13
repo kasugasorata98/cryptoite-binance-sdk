@@ -4,6 +4,10 @@ import {
     BinanceAccount,
     BinanceConstructor,
     BinanceExchangeInfo,
+    CancelOrderRequest,
+    CancelOrderResponse,
+    NewLimitOrderRequest,
+    NewLimitOrderResponse,
     NewMarketOrderRequest,
     NewMarketOrderResponse,
 } from '../entities/binance.entity'
@@ -97,7 +101,7 @@ class BinanceService {
     }: NewMarketOrderRequest): Promise<NewMarketOrderResponse> {
         try {
             let body: NewMarketOrderRequest = {
-                symbol: symbol,
+                symbol,
                 side,
                 type,
             }
@@ -105,6 +109,60 @@ class BinanceService {
             if (quantity) body['quantity'] = quantity
             const { data } = await this.api.post<NewMarketOrderResponse>(
                 `${ApiEndpoints.NEW_ORDER.path}?${new URLSearchParams(
+                    Utils.objectValuesToString(body)
+                )}`
+            )
+            return data
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async newLimitOrder({
+        symbol,
+        side,
+        type,
+        timeInForce,
+        quantity,
+        price,
+    }: NewLimitOrderRequest): Promise<NewLimitOrderResponse> {
+        try {
+            let body: NewLimitOrderRequest = {
+                symbol: symbol,
+                side,
+                type,
+                timeInForce,
+                quantity,
+                price,
+            }
+            const { data } = await this.api.post<NewLimitOrderResponse>(
+                `${ApiEndpoints.NEW_ORDER.path}?${new URLSearchParams(
+                    Utils.objectValuesToString(body)
+                )}`
+            )
+            return data
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async cancelOrder({
+        symbol,
+        orderId,
+        origClientOrderId,
+        newClientOrderId,
+    }: CancelOrderRequest): Promise<Array<CancelOrderResponse>> {
+        try {
+            let body: CancelOrderRequest = {
+                symbol,
+            }
+            if (orderId) body['orderId'] = orderId
+            if (origClientOrderId) body['origClientOrderId'] = origClientOrderId
+            if (newClientOrderId) body['newClientOrderId'] = newClientOrderId
+            const { data } = await this.api[ApiEndpoints.CANCEL_ORDER.method]<
+                Array<CancelOrderResponse>
+            >(
+                `${ApiEndpoints.CANCEL_ORDER.path}?${new URLSearchParams(
                     Utils.objectValuesToString(body)
                 )}`
             )

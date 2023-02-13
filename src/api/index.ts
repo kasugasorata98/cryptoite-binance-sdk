@@ -37,7 +37,6 @@ const API = ({
     api_secret: string
 }) => {
     if (api_key) GLOBAL_API_KEY = api_key
-    console.log(configs.BASE_URL)
     const axiosInstance = axios.create({
         baseURL: configs.BASE_URL,
         headers: {
@@ -62,6 +61,7 @@ const API = ({
                     params[key] = value
                 }
             )
+
             Object.values(ApiEndpoints).forEach((endpointValues) => {
                 if (request?.url) {
                     const path = request.url.split('?')[0]
@@ -75,6 +75,7 @@ const API = ({
                                 params,
                                 api_secret
                             )
+
                         return
                     }
                 }
