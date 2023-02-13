@@ -50,7 +50,7 @@ const ApiEndpoints: {
         signature: true,
     },
     CANCEL_ORDER: {
-        path: 'api/v3/order',
+        path: 'api/v3/openOrders',
         method: 'delete',
         timestamp: true,
         recvWindow: true,

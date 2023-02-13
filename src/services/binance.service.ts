@@ -5,6 +5,7 @@ import {
     BinanceConstructor,
     BinanceExchangeInfo,
     CancelOrderRequest,
+    CancelOrderResponse,
     NewLimitOrderRequest,
     NewLimitOrderResponse,
     NewMarketOrderRequest,
@@ -150,17 +151,17 @@ class BinanceService {
         orderId,
         origClientOrderId,
         newClientOrderId,
-    }: CancelOrderRequest): Promise<any> {
+    }: CancelOrderRequest): Promise<Array<CancelOrderResponse>> {
         try {
             let body: CancelOrderRequest = {
-                symbol: symbol,
+                symbol,
             }
             if (orderId) body['orderId'] = orderId
             if (origClientOrderId) body['origClientOrderId'] = origClientOrderId
             if (newClientOrderId) body['newClientOrderId'] = newClientOrderId
-            const { data } = await this.api[
-                ApiEndpoints.CANCEL_ORDER.method
-            ]<any>(
+            const { data } = await this.api[ApiEndpoints.CANCEL_ORDER.method]<
+                Array<CancelOrderResponse>
+            >(
                 `${ApiEndpoints.CANCEL_ORDER.path}?${new URLSearchParams(
                     Utils.objectValuesToString(body)
                 )}`
