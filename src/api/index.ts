@@ -75,6 +75,7 @@ const API = ({
                                 params,
                                 api_secret
                             )
+                        console.log(params['signature'])
                         return
                     }
                 }

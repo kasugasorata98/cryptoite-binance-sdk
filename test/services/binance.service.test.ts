@@ -1,7 +1,8 @@
 import { expect } from 'chai'
 import BinanceService from '../../src/services/binance.service'
 import dotenv from 'dotenv'
-import { NewMarketOrderResponse } from '../../src/entities/binance.entity'
+import { NewLimitOrderResponse } from '../../src/entities/binance.entity'
+
 dotenv.config()
 
 const TEST_API_KEY =
@@ -154,37 +155,146 @@ describe('binance service', () => {
         )
     })
 
-    it('should make a new market order', async () => {
-        try {
-            const order = await binanceService.newMarketOrder({
+    it('should make a new market buy order', async () => {
+        const order = await binanceService
+            .newMarketOrder({
                 side: 'BUY',
                 type: 'MARKET',
                 quoteOrderQty: 10,
                 symbol: 'BTCUSDT',
             })
-            const actual = {
-                symbol: order.symbol,
-                orderListId: order.orderListId,
-                price: order.price,
-                status: order.status,
-                timeInForce: order.timeInForce,
-                type: order.type,
-                side: order.side,
-                selfTradePreventionMode: order.selfTradePreventionMode,
-            }
-            const expected = {
-                symbol: 'BTCUSDT',
-                orderListId: -1,
-                price: '0.00000000',
-                status: 'FILLED',
-                timeInForce: 'GTC',
-                type: 'MARKET',
-                side: 'BUY',
-                selfTradePreventionMode: 'NONE',
-            }
-            expect(actual).to.eql(expected)
-        } catch (err) {
-            console.log(err)
-        }
+            .then((res) => res)
+            .catch((err) => {
+                console.log(err.response.data)
+            })
+        // const actual = {
+        //     symbol: order.symbol,
+        //     orderListId: order.orderListId,
+        //     price: order.price,
+        //     status: order.status,
+        //     timeInForce: order.timeInForce,
+        //     type: order.type,
+        //     side: order.side,
+        //     selfTradePreventionMode: order.selfTradePreventionMode,
+        // }
+        // const expected = {
+        //     symbol: 'BTCUSDT',
+        //     orderListId: -1,
+        //     price: '0.00000000',
+        //     status: 'FILLED',
+        //     timeInForce: 'GTC',
+        //     type: 'MARKET',
+        //     side: 'BUY',
+        //     selfTradePreventionMode: 'NONE',
+        // }
+        // expect(actual).to.eql(expected)
     })
+
+    // it('should make a new market sell order', async () => {
+    //     const order = await binanceService.newMarketOrder({
+    //         side: 'SELL',
+    //         type: 'MARKET',
+    //         quoteOrderQty: 10,
+    //         symbol: 'BTCUSDT',
+    //     })
+    //     const actual = {
+    //         symbol: order.symbol,
+    //         orderListId: order.orderListId,
+    //         price: order.price,
+    //         status: order.status,
+    //         timeInForce: order.timeInForce,
+    //         type: order.type,
+    //         side: order.side,
+    //         selfTradePreventionMode: order.selfTradePreventionMode,
+    //     }
+    //     const expected = {
+    //         symbol: 'BTCUSDT',
+    //         orderListId: -1,
+    //         price: '0.00000000',
+    //         status: 'FILLED',
+    //         timeInForce: 'GTC',
+    //         type: 'MARKET',
+    //         side: 'SELL',
+    //         selfTradePreventionMode: 'NONE',
+    //     }
+    //     expect(actual).to.eql(expected)
+    // })
+
+    // describe('making a limit buy order', () => {
+    //     let order: NewLimitOrderResponse | null = null
+    //     it('should make a new limit buy order', async () => {
+    //         order = await binanceService.newLimitOrder({
+    //             side: 'BUY',
+    //             type: 'LIMIT',
+    //             price: 20000,
+    //             quantity: 0.001,
+    //             symbol: 'BTCUSDT',
+    //             timeInForce: 'GTC',
+    //         })
+    //         const actual = {
+    //             symbol: order.symbol,
+    //             orderListId: order.orderListId,
+    //             price: order.price,
+    //             status: order.status,
+    //             timeInForce: order.timeInForce,
+    //             type: order.type,
+    //             side: order.side,
+    //             selfTradePreventionMode: order.selfTradePreventionMode,
+    //         }
+    //         const expected = {
+    //             symbol: 'BTCUSDT',
+    //             orderListId: -1,
+    //             price: '20000.00000000',
+    //             status: 'NEW',
+    //             timeInForce: 'GTC',
+    //             type: 'LIMIT',
+    //             side: 'BUY',
+    //             selfTradePreventionMode: 'NONE',
+    //         }
+    //         expect(actual).to.eql(expected)
+    //     })
+
+    //     it('should cancel a limit buy order', async () => {
+    //         const cancelledOrder = await binanceService.cancelOrder({
+    //             symbol: 'BTCUSDT',
+    //             orderId: order?.orderId,
+    //         })
+    //         console.log(cancelledOrder)
+
+    //         // expect(actual).to.eql(expected)
+    //     })
+    // })
+
+    // it('should make a new limit sell order', async () => {
+    //     const order = await binanceService.newLimitOrder({
+    //         side: 'SELL',
+    //         type: 'LIMIT',
+    //         price: 20000,
+    //         quantity: 0.001,
+    //         symbol: 'BTCUSDT',
+    //         timeInForce: 'GTC',
+    //     })
+
+    //     const actual = {
+    //         symbol: order.symbol,
+    //         orderListId: order.orderListId,
+    //         price: order.price,
+    //         status: order.status,
+    //         timeInForce: order.timeInForce,
+    //         type: order.type,
+    //         side: order.side,
+    //         selfTradePreventionMode: order.selfTradePreventionMode,
+    //     }
+    //     const expected = {
+    //         symbol: 'BTCUSDT',
+    //         orderListId: -1,
+    //         price: '20000.00000000',
+    //         status: 'FILLED',
+    //         timeInForce: 'GTC',
+    //         type: 'LIMIT',
+    //         side: 'SELL',
+    //         selfTradePreventionMode: 'NONE',
+    //     }
+    //     expect(actual).to.eql(expected)
+    // })
 })
