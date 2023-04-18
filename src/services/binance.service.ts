@@ -1,33 +1,30 @@
 import axios, { Axios, AxiosInstance } from 'axios'
-import Config from '../configs'
-import {
-    BinanceAccount,
-    BinanceConstructor,
-    BinanceExchangeInfo,
-    CancelOrderRequest,
-    CancelOrderResponse,
-    NewLimitOrderRequest,
-    NewLimitOrderResponse,
-    NewMarketOrderRequest,
-    NewMarketOrderResponse,
-} from '../entities/binance.entity'
-import { ConfigEntity } from '../entities/config.entity'
 import websocket from 'ws'
 
 import API from '../api'
-import { ApiEndpoints } from '../api/endpoints'
 import Utils from '../utils'
-
+import { ExchangeInfo } from '../entities/exchange-info.entity'
+import { Account } from '../entities/account.entity'
+import { NewMarketOrderRequest } from '../entities/new-market-order-request.entity'
+import { NewMarketOrderResponse } from '../entities/new-market-order-response.entity'
+import { NewLimitOrderRequest } from '../entities/new-limit-order-request.entity'
+import { NewLimitOrderResponse } from '../entities/new-limit-order-response.entity'
+import { CancelOrderRequest } from '../entities/cancel-order-request.entity'
+import { CancelOrderResponse } from '../entities/cancel-order-response.entity'
+import { SystemStatusResponse } from '../entities/system-status-response.entity'
+import { ApiKeyPermission } from '../entities/api-key-permission-response.entity'
 class BinanceService {
     private api: AxiosInstance
 
-    constructor(api_key: string, private api_secret: string) {
-        this.api = API({ api_key, api_secret })
+    constructor(apiKey: string, private secretKey: string) {
+        this.api = API({ apiKey, secretKey })
     }
 
     async getSystemStatus() {
         try {
-            const { data } = await this.api.get(ApiEndpoints.SYSTEM_STATUS.path)
+            const { data } = await this.api.get<SystemStatusResponse>(
+                '/sapi/v1/system/status'
+            )
             return data
         } catch (err) {
             throw err
@@ -36,7 +33,7 @@ class BinanceService {
 
     async getExchangeInfo(
         symbols: string | Array<string>
-    ): Promise<BinanceExchangeInfo> {
+    ): Promise<ExchangeInfo> {
         if (typeof symbols === 'string') {
             symbols = [symbols]
         }
@@ -44,15 +41,15 @@ class BinanceService {
             symbols = encodeURIComponent(JSON.stringify(symbols))
         }
         const url = symbols
-            ? `${ApiEndpoints.EXCHANGE_INFO.path}?symbols=${symbols}`
-            : `${ApiEndpoints.EXCHANGE_INFO.path}`
+            ? `/api/v3/exchangeInfo?symbols=${symbols}`
+            : '/api/v3/exchangeInfo'
         const res = await this.api.get(url)
-        const exchangeInfo: BinanceExchangeInfo = {
+        const exchangeInfo: ExchangeInfo = {
             ...res.data,
             symbols: {},
         }
         for (let obj of res.data.symbols) {
-            let filters: BinanceExchangeInfo['symbols'] = {
+            let filters: ExchangeInfo['symbols'] = {
                 status: obj.status,
             }
             for (let filter of obj.filters) {
@@ -78,14 +75,19 @@ class BinanceService {
     }
 
     async getApiKeyPermissions() {
-        return await this.api.get(`${ApiEndpoints.API_KEY_PERMISSION.path}`)
+        try {
+            const { data } = await this.api.get<ApiKeyPermission>(
+                `sapi/v1/account/apiRestrictions`
+            )
+            return data
+        } catch (err) {
+            throw err
+        }
     }
 
-    async getAccount(): Promise<BinanceAccount> {
+    async getAccount(): Promise<Account> {
         try {
-            const { data } = await this.api.get<BinanceAccount>(
-                `${ApiEndpoints.ACCOUNT.path}`
-            )
+            const { data } = await this.api.get<Account>(`api/v3/account`)
             return data
         } catch (err) {
             throw err
@@ -108,7 +110,7 @@ class BinanceService {
             if (quoteOrderQty) body['quoteOrderQty'] = quoteOrderQty
             if (quantity) body['quantity'] = quantity
             const { data } = await this.api.post<NewMarketOrderResponse>(
-                `${ApiEndpoints.NEW_ORDER.path}?${new URLSearchParams(
+                `api/v3/order?${new URLSearchParams(
                     Utils.objectValuesToString(body)
                 )}`
             )
@@ -136,7 +138,7 @@ class BinanceService {
                 price,
             }
             const { data } = await this.api.post<NewLimitOrderResponse>(
-                `${ApiEndpoints.NEW_ORDER.path}?${new URLSearchParams(
+                `api/v3/order?${new URLSearchParams(
                     Utils.objectValuesToString(body)
                 )}`
             )
@@ -159,10 +161,8 @@ class BinanceService {
             if (orderId) body['orderId'] = orderId
             if (origClientOrderId) body['origClientOrderId'] = origClientOrderId
             if (newClientOrderId) body['newClientOrderId'] = newClientOrderId
-            const { data } = await this.api[ApiEndpoints.CANCEL_ORDER.method]<
-                Array<CancelOrderResponse>
-            >(
-                `${ApiEndpoints.CANCEL_ORDER.path}?${new URLSearchParams(
+            const { data } = await this.api.delete<Array<CancelOrderResponse>>(
+                `api/v3/openOrders?${new URLSearchParams(
                     Utils.objectValuesToString(body)
                 )}`
             )

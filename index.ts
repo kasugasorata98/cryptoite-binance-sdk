@@ -1,32 +1,35 @@
 import dotenv from 'dotenv'
-import BinanceController from './src/controllers/binance.controller'
 import BinanceService from './src/services/binance.service'
+import Utils from './src/utils'
 dotenv.config()
 
-// const TEST_API_KEY =
-//     'cdP2XoQhWt0adRCtOmdvEcWHaEwWid7naECwbpnXuUI3CtUzVKYvBgRUQsHwR7Bx'
-// const TEST_API_SECRET =
-//     'AihPw44bR6iQ90uiybvvpFT37lvBDm834eNbsXQVb1qPBq7ikMSylHgRvIUqI85e'
+const apiKey =
+    'ULBxE4oYuNjfH2kU1WsNIkjqGTuyvcl2ulEnbadLps24BYn6vN5ynDas2sC3iLLW'
+const secretKey =
+    'v3A2kpJDXNhzNgLP8G9OfXywgjvTFZkyEMAYOaOl8IbGZ88ytAlhQhwv6aL0s9eW'
 
-// const binance = new BinanceController({
-//     api_key: TEST_API_KEY,
-//     api_secret: TEST_API_SECRET,
-//     recvWindow: 60000,
-//     NODE_ENV: 'staging',
-// })
-// const binanceService = new BinanceService(TEST_API_KEY, TEST_API_SECRET)
+const binanceService = new BinanceService(apiKey, secretKey)
 // binanceService
-//     .newMarketOrder({
-//         side: 'BUY',
-//         type: 'MARKET',
-//         quoteOrderQty: 10,
-//         symbol: 'BTCUSDT',
-//     })
+//     .getSystemStatus()
 //     .then((res) => {
 //         console.log(res)
 //     })
-//     .catch((err) => {
-//         console.log(err)
-//     })
+//     .catch((err) => console.log(err))
 
-export { BinanceController }
+// binanceService
+//     .getApiKeyPermissions()
+//     .then((res) => {
+//         console.log(res)
+//     })
+//     .catch((err) => console.log(err))
+
+binanceService
+    .getAccount()
+    .then((res) => {
+        console.log(res)
+    })
+    .catch((err) => console.log(err))
+
+export { BinanceService as Binance }
+
+export { Utils as BinanceUtils }
