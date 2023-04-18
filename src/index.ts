@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
-import BinanceService from './src/services/binance.service'
-import Utils from './src/utils'
+import BinanceService from './services/binance.service'
+import Utils from './utils'
+
 dotenv.config()
 
 const apiKey =
@@ -23,12 +24,12 @@ const binanceService = new BinanceService(apiKey, secretKey)
 //     })
 //     .catch((err) => console.log(err))
 
-binanceService
-    .getAccount()
-    .then((res) => {
-        console.log(res)
-    })
-    .catch((err) => console.log(err))
+// binanceService
+//     .getAccount()
+//     .then((res) => {
+//         console.log(res)
+//     })
+//     .catch((err) => console.log(err))
 
 export { BinanceService as Binance }
 
