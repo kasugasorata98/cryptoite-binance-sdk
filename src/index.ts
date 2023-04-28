@@ -10,26 +10,14 @@ const secretKey =
     'v3A2kpJDXNhzNgLP8G9OfXywgjvTFZkyEMAYOaOl8IbGZ88ytAlhQhwv6aL0s9eW'
 
 const binanceService = new BinanceService(apiKey, secretKey)
-// binanceService
-//     .getSystemStatus()
-//     .then((res) => {
-//         console.log(res)
-//     })
-//     .catch((err) => console.log(err))
+// binanceService.subscribeTicker((ticker) => {
+//     //console.log(ticker)
+// })
 
-// binanceService
-//     .getApiKeyPermissions()
-//     .then((res) => {
-//         console.log(res)
-//     })
-//     .catch((err) => console.log(err))
-
-// binanceService
-//     .getAccount()
-//     .then((res) => {
-//         console.log(res)
-//     })
-//     .catch((err) => console.log(err))
+// binanceService.createListenKey().then((data) => {
+//     console.log(data)
+//     binanceService.closeListenKey(data)
+// })
 
 export { BinanceService as Binance }
 

@@ -29,18 +29,21 @@ const API = ({ apiKey, secretKey }: { apiKey: string; secretKey: string }) => {
     )
     axiosInstance.interceptors.request.use(
         (request) => {
-            let params: any = {}
-            new URLSearchParams(request.url?.split('?')[1]).forEach(
-                (value, key) => {
-                    params[key] = value
-                }
-            )
-            params['recvWindow'] = 60000
-            params['timestamp'] = Date.now()
-            params['signature'] = generateSignature(params, secretKey)
+            if (!request.headers?.['skipSignature']) {
+                let params: any = {}
+                new URLSearchParams(request.url?.split('?')[1]).forEach(
+                    (value, key) => {
+                        params[key] = value
+                    }
+                )
+                params['recvWindow'] = 60000
+                params['timestamp'] = Date.now()
+                params['signature'] = generateSignature(params, secretKey)
 
-            request.url =
-                request.url?.split('?')[0] + `?${new URLSearchParams(params)}`
+                request.url =
+                    request.url?.split('?')[0] +
+                    `?${new URLSearchParams(params)}`
+            }
             return request
         },
         (error) => {

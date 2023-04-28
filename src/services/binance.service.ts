@@ -13,6 +13,8 @@ import { CancelOrderRequest } from '../entities/cancel-order-request.entity'
 import { CancelOrderResponse } from '../entities/cancel-order-response.entity'
 import { SystemStatusResponse } from '../entities/system-status-response.entity'
 import { ApiKeyPermission } from '../entities/api-key-permission-response.entity'
+import BinanceWs from '../websocket'
+import { Ticker } from '../entities/ticker.entity'
 class BinanceService {
     private api: AxiosInstance
 
@@ -165,6 +167,79 @@ class BinanceService {
                 `api/v3/openOrders?${new URLSearchParams(
                     Utils.objectValuesToString(body)
                 )}`
+            )
+            return data
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async subscribeTicker(callback: (ticker: Ticker) => void) {
+        const tickerWs = new BinanceWs('!ticker@arr')
+        tickerWs.subscribe((data: Object) => {
+            const tickerArray = data as Array<{
+                s: string
+                h: string
+                l: string
+                a: string
+                b: string
+                c: string
+            }>
+            for (const element of tickerArray) {
+                callback({
+                    symbol: element.s,
+                    high: element.h,
+                    low: element.l,
+                    bestAsk: element.a,
+                    bestBid: element.b,
+                    lastPrice: element.c,
+                })
+            }
+        })
+    }
+
+    async createListenKey(): Promise<string> {
+        try {
+            const { data } = await this.api.post<{
+                listenKey: string
+            }>('api/v3/userDataStream', null, {
+                headers: {
+                    skipSignature: true,
+                },
+            })
+            const listenKey = data.listenKey
+            return listenKey
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async pingListenKey(listenKey: string): Promise<Object> {
+        try {
+            const { data } = await this.api.put<Object>(
+                `api/v3/userDataStream?listenKey=${listenKey}`,
+                null,
+                {
+                    headers: {
+                        skipSignature: true,
+                    },
+                }
+            )
+            return data
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async closeListenKey(listenKey: string): Promise<Object> {
+        try {
+            const { data } = await this.api.delete<Object>(
+                `api/v3/userDataStream?listenKey=${listenKey}`,
+                {
+                    headers: {
+                        skipSignature: true,
+                    },
+                }
             )
             return data
         } catch (err) {
