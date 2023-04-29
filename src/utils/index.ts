@@ -1,4 +1,7 @@
 import { AxiosResponseHeaders, RawAxiosResponseHeaders } from 'axios'
+import CryptoJS from 'crypto-js'
+import { Object } from '../entities/object.entity'
+import { OutboundAccountPosition } from '../entities/outbound-account-position.entity'
 
 const Utils = {
     roundStep: (qty: number, stepSize: string) => {
@@ -47,6 +50,12 @@ const Utils = {
         headers[sapi] && (weights[sapi] = headers[sapi])
         headers[sapi1min] && (weights[sapi1min] = headers[sapi1min])
         // console.log(weights)
+    },
+    generateSignature: (body: { [key: string]: any }, api_secret: string) => {
+        return CryptoJS.HmacSHA256(
+            new URLSearchParams(body).toString(),
+            api_secret
+        ).toString(CryptoJS.enc.Hex)
     },
 }
 

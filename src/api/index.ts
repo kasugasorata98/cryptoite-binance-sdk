@@ -1,13 +1,6 @@
 import axios from 'axios'
-import CryptoJS from 'crypto-js'
 import Utils from '../utils'
 
-function generateSignature(body: { [key: string]: any }, api_secret: string) {
-    return CryptoJS.HmacSHA256(
-        new URLSearchParams(body).toString(),
-        api_secret
-    ).toString(CryptoJS.enc.Hex)
-}
 let GLOBAL_API_KEY: string = ''
 const API = ({ apiKey, secretKey }: { apiKey: string; secretKey: string }) => {
     if (apiKey) GLOBAL_API_KEY = apiKey
@@ -55,3 +48,6 @@ const API = ({ apiKey, secretKey }: { apiKey: string; secretKey: string }) => {
 }
 
 export default API
+function generateSignature(params: any, secretKey: string): any {
+    throw new Error('Function not implemented.')
+}

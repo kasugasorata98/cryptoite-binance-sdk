@@ -1,16 +1,21 @@
 import WebSocket from 'ws'
+import { Object } from '../entities/object.entity'
+import { AxiosInstance } from 'axios'
 
 const wsBaseUrl = 'wss://stream.binance.com:9443/ws'
 
 class BinanceWs {
-    private ws!: WebSocket
-    private keepAliveTimer?: NodeJS.Timer
+    public ws!: WebSocket
+    private keepWsAliveTimer?: NodeJS.Timer
+    private keepListenKeyAliveTimer?: NodeJS.Timer
     private reconnect: boolean = true
 
-    constructor(private endpoint: string) {}
+    constructor(public endpoint: string, private api: AxiosInstance) {}
 
     public subscribe(
         callback: (messageObject: Object) => void,
+        payload?: Object,
+        listenKey?: string,
         isReconnectAttempt: boolean = false
     ) {
         if (this.ws && isReconnectAttempt === false)
@@ -18,21 +23,29 @@ class BinanceWs {
                 'A WebSocket is already initalized in this instance. To create another, please create a new instance.'
             )
 
-        this.ws = new WebSocket(`${wsBaseUrl}/${this.endpoint}`)
-        this.ws.on('open', () => this.handleSocketOpen())
+        this.ws = new WebSocket(`${wsBaseUrl}/${listenKey || this.endpoint}`)
+        this.ws.on('open', () => this.handleSocketOpen(payload, listenKey))
         this.ws.on('message', (data) =>
             this.handleMessageReceived(data, callback)
         )
         this.ws.on('ping', (ping) => this.handleSocketHeartbeat(ping))
         this.ws.on('error', (error) => this.handleSocketError(error))
-        this.ws.on('close', () => this.handleSocketClose(callback))
+        this.ws.on('close', () =>
+            this.handleSocketClose(callback, payload, listenKey)
+        )
     }
 
-    private handleSocketOpen() {
+    private handleSocketOpen(payload?: Object, listenKey?: string) {
         console.log('Ws is open')
-        this.keepAliveTimer = setInterval(() => {
+        if (payload) this.ws.send(JSON.stringify(payload))
+        this.keepWsAliveTimer = setInterval(() => {
             this.ws.ping()
         }, 30 * 1000)
+        if (listenKey) {
+            this.keepListenKeyAliveTimer = setInterval(() => {
+                this.pingListenKey(listenKey)
+            }, 60 * 1000 * 30)
+        }
     }
 
     private handleMessageReceived(
@@ -61,13 +74,70 @@ class BinanceWs {
         this.ws.close()
     }
 
-    private handleSocketClose(callback: (messageObject: Object) => void) {
-        clearInterval(this.keepAliveTimer)
+    private handleSocketClose(
+        callback: (messageObject: Object) => void,
+        payload?: Object,
+        listenKey?: string
+    ) {
+        clearInterval(this.keepWsAliveTimer)
+        clearInterval(this.keepListenKeyAliveTimer)
         if (this.reconnect) {
             console.log('Reconnecting...')
-            setTimeout(() => this.subscribe(callback, true), 500)
+            setTimeout(
+                () => this.subscribe(callback, payload, listenKey, true),
+                500
+            )
         } else {
             console.log(`Ws has been closed/terminated`)
+        }
+    }
+
+    async createListenKey(): Promise<string> {
+        try {
+            const { data } = await this.api.post<{
+                listenKey: string
+            }>('api/v3/userDataStream', null, {
+                headers: {
+                    skipSignature: true,
+                },
+            })
+            const listenKey = data.listenKey
+            return listenKey
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async pingListenKey(listenKey: string): Promise<Object> {
+        try {
+            const { data } = await this.api.put<Object>(
+                `api/v3/userDataStream?listenKey=${listenKey}`,
+                null,
+                {
+                    headers: {
+                        skipSignature: true,
+                    },
+                }
+            )
+            return data
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async closeListenKey(listenKey: string): Promise<Object> {
+        try {
+            const { data } = await this.api.delete<Object>(
+                `api/v3/userDataStream?listenKey=${listenKey}`,
+                {
+                    headers: {
+                        skipSignature: true,
+                    },
+                }
+            )
+            return data
+        } catch (err) {
+            throw err
         }
     }
 }

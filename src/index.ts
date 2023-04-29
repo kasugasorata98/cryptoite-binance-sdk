@@ -19,6 +19,8 @@ const binanceService = new BinanceService(apiKey, secretKey)
 //     binanceService.closeListenKey(data)
 // })
 
+binanceService.subscribeAccount()
+
 export { BinanceService as Binance }
 
 export { Utils as BinanceUtils }

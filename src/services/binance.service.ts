@@ -1,6 +1,4 @@
-import axios, { Axios, AxiosInstance } from 'axios'
-import websocket from 'ws'
-
+import { AxiosInstance } from 'axios'
 import API from '../api'
 import Utils from '../utils'
 import { ExchangeInfo } from '../entities/exchange-info.entity'
@@ -15,10 +13,13 @@ import { SystemStatusResponse } from '../entities/system-status-response.entity'
 import { ApiKeyPermission } from '../entities/api-key-permission-response.entity'
 import BinanceWs from '../websocket'
 import { Ticker } from '../entities/ticker.entity'
+import { Object } from '../entities/object.entity'
+import { OutboundAccountPosition } from '../entities/outbound-account-position.entity'
+import { ExecutionReport } from '../entities/execution-report.entity'
 class BinanceService {
     private api: AxiosInstance
 
-    constructor(apiKey: string, private secretKey: string) {
+    constructor(private apiKey: string, private secretKey: string) {
         this.api = API({ apiKey, secretKey })
     }
 
@@ -175,7 +176,7 @@ class BinanceService {
     }
 
     async subscribeTicker(callback: (ticker: Ticker) => void) {
-        const tickerWs = new BinanceWs('!ticker@arr')
+        const tickerWs = new BinanceWs('!ticker@arr', this.api)
         tickerWs.subscribe((data: Object) => {
             const tickerArray = data as Array<{
                 s: string
@@ -198,53 +199,26 @@ class BinanceService {
         })
     }
 
-    async createListenKey(): Promise<string> {
-        try {
-            const { data } = await this.api.post<{
-                listenKey: string
-            }>('api/v3/userDataStream', null, {
-                headers: {
-                    skipSignature: true,
-                },
-            })
-            const listenKey = data.listenKey
-            return listenKey
-        } catch (err) {
-            throw err
-        }
-    }
-
-    async pingListenKey(listenKey: string): Promise<Object> {
-        try {
-            const { data } = await this.api.put<Object>(
-                `api/v3/userDataStream?listenKey=${listenKey}`,
-                null,
-                {
-                    headers: {
-                        skipSignature: true,
-                    },
+    async subscribeAccount() {
+        const tickerWs = new BinanceWs('', this.api)
+        const listenKey = await tickerWs.createListenKey()
+        tickerWs.subscribe(
+            (data: Object) => {
+                console.log(data)
+                if (data['e'] === 'outboundAccountPosition') {
+                    const outboundAccountPosition =
+                        data as OutboundAccountPosition
+                } else if (data['e'] === 'executionReport') {
+                    const executionReport = data as ExecutionReport
                 }
-            )
-            return data
-        } catch (err) {
-            throw err
-        }
-    }
-
-    async closeListenKey(listenKey: string): Promise<Object> {
-        try {
-            const { data } = await this.api.delete<Object>(
-                `api/v3/userDataStream?listenKey=${listenKey}`,
-                {
-                    headers: {
-                        skipSignature: true,
-                    },
-                }
-            )
-            return data
-        } catch (err) {
-            throw err
-        }
+            },
+            {
+                method: 'SUBSCRIBE',
+                params: [`executionReport`, 'outboundAccountPosition'],
+                id: 1,
+            },
+            listenKey
+        )
     }
 }
 
