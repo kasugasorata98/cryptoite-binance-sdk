@@ -175,7 +175,9 @@ class BinanceService {
         }
     }
 
-    async subscribeTicker(callback: (ticker: Ticker) => void) {
+    async subscribeTicker(
+        callback: (err: Error | null, ticker: Ticker) => void
+    ) {
         const tickerWs = new BinanceWs('!ticker@arr', this.api)
         tickerWs.subscribe((data: Object) => {
             const tickerArray = data as Array<{
@@ -187,7 +189,7 @@ class BinanceService {
                 c: string
             }>
             for (const element of tickerArray) {
-                callback({
+                callback(null, {
                     symbol: element.s,
                     high: element.h,
                     low: element.l,
@@ -199,17 +201,24 @@ class BinanceService {
         })
     }
 
-    async subscribeAccount() {
+    async subscribeAccount(
+        callback: (
+            err: Error | null,
+            data?: OutboundAccountPosition | ExecutionReport
+        ) => void
+    ) {
         const tickerWs = new BinanceWs('', this.api)
-        const listenKey = await tickerWs.createListenKey()
         tickerWs.subscribe(
             (data: Object) => {
-                console.log(data)
                 if (data['e'] === 'outboundAccountPosition') {
                     const outboundAccountPosition =
                         data as OutboundAccountPosition
+                    callback(null, outboundAccountPosition)
                 } else if (data['e'] === 'executionReport') {
                     const executionReport = data as ExecutionReport
+                    callback(null, executionReport)
+                } else {
+                    callback(new Error('Event Type unknown'))
                 }
             },
             {
@@ -217,7 +226,7 @@ class BinanceService {
                 params: [`executionReport`, 'outboundAccountPosition'],
                 id: 1,
             },
-            listenKey
+            true
         )
     }
 }

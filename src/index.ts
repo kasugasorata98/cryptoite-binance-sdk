@@ -19,7 +19,10 @@ const binanceService = new BinanceService(apiKey, secretKey)
 //     binanceService.closeListenKey(data)
 // })
 
-binanceService.subscribeAccount()
+binanceService.subscribeAccount((err, data) => {
+    if (err) return
+    console.log(data)
+})
 
 export { BinanceService as Binance }
 
