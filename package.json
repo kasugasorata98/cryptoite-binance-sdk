@@ -14,8 +14,7 @@
         "test": "jest"
     },
     "repository": {
-        "type": "git",
-        "url": "git+https://github.com/kasugasorata98/cryptoite-binance-sdk.git"
+        "url": "https://github.com/kasugasorata98/cryptoite-binance-sdk"
     },
     "keywords": [],
     "author": "",
