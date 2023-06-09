@@ -3,7 +3,7 @@ name: Publish Package
 on:
   push:
     branches:
-    - master
+    - main
     
 jobs:
   publish-gpr:
@@ -17,5 +17,5 @@ jobs:
           scope: '@kasugasorata98'
       - run: npm install
       - run: npm publish
-      env:
-        NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
