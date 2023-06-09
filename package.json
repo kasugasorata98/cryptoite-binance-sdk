@@ -4,6 +4,7 @@
     "description": "",
     "main": "dist/src/index.js",
     "types": "dist/src/index.d.ts",
+    "registry": "https://npm.pkg.github.com/@kasugasorata98",
     "scripts": {
         "start": "ts-node index.ts",
         "start:dev": "nodemon --exec ts-node index.ts",
