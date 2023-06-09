@@ -1,5 +1,5 @@
 {
-    "name": "cryptoite-binance-sdk",
+    "name": "@kasugasorata98/cryptoite-binance-sdk",
     "version": "1.0.4",
     "description": "",
     "main": "dist/src/index.js",
