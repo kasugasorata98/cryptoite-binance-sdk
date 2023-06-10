@@ -4,12 +4,12 @@ import Utils from './utils'
 
 dotenv.config()
 
-const apiKey =
-    'ULBxE4oYuNjfH2kU1WsNIkjqGTuyvcl2ulEnbadLps24BYn6vN5ynDas2sC3iLLW'
-const secretKey =
-    'v3A2kpJDXNhzNgLP8G9OfXywgjvTFZkyEMAYOaOl8IbGZ88ytAlhQhwv6aL0s9eW'
+// const apiKey =
+//     'ULBxE4oYuNjfH2kU1WsNIkjqGTuyvcl2ulEnbadLps24BYn6vN5ynDas2sC3iLLW'
+// const secretKey =
+//     'v3A2kpJDXNhzNgLP8G9OfXywgjvTFZkyEMAYOaOl8IbGZ88ytAlhQhwv6aL0s9eW'
 
-const binanceService = new BinanceService(apiKey, secretKey)
+// const binanceService = new BinanceService(apiKey, secretKey)
 // binanceService.subscribeTicker((ticker) => {
 //     //console.log(ticker)
 // })
@@ -19,10 +19,10 @@ const binanceService = new BinanceService(apiKey, secretKey)
 //     binanceService.closeListenKey(data)
 // })
 
-binanceService.subscribeAccount((err, data) => {
-    if (err) return
-    console.log(data)
-})
+// binanceService.subscribeAccount((err, data) => {
+//     if (err) return
+//     console.log(data)
+// })
 
 export { BinanceService as Binance }
 
