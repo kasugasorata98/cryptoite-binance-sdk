@@ -179,26 +179,30 @@ class BinanceService {
         callback: (err: Error | null, ticker: Ticker) => void
     ) {
         const tickerWs = new BinanceWs('!ticker@arr', this.api)
-        tickerWs.subscribe((data: Object) => {
-            const tickerArray = data as Array<{
-                s: string
-                h: string
-                l: string
-                a: string
-                b: string
-                c: string
-            }>
-            for (const element of tickerArray) {
-                callback(null, {
-                    symbol: element.s,
-                    high: element.h,
-                    low: element.l,
-                    bestAsk: element.a,
-                    bestBid: element.b,
-                    lastPrice: element.c,
-                })
-            }
-        })
+        tickerWs.subscribe(
+            (data: Object) => {
+                const tickerArray = data as Array<{
+                    s: string
+                    h: string
+                    l: string
+                    a: string
+                    b: string
+                    c: string
+                }>
+                for (const element of tickerArray) {
+                    callback(null, {
+                        symbol: element.s,
+                        high: element.h,
+                        low: element.l,
+                        bestAsk: element.a,
+                        bestBid: element.b,
+                        lastPrice: element.c,
+                    })
+                }
+            },
+            undefined,
+            false
+        )
     }
 
     async subscribeAccount(

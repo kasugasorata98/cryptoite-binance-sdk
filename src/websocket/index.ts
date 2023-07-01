@@ -23,7 +23,9 @@ class BinanceWs {
                 'A WebSocket is already initalized in this instance. To create another, please create a new instance.'
             )
         let listenKey: string = ''
-        listenKey = await this.createListenKey()
+        if (useListenKey) {
+            listenKey = await this.createListenKey()
+        }
         this.ws = new WebSocket(`${wsBaseUrl}/${listenKey || this.endpoint}`)
 
         this.ws.on('open', () => this.handleSocketOpen(payload, listenKey))
