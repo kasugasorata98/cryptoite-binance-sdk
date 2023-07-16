@@ -31,7 +31,7 @@ const API = ({ apiKey, secretKey }: { apiKey: string; secretKey: string }) => {
                 )
                 params['recvWindow'] = 60000
                 params['timestamp'] = Date.now()
-                params['signature'] = generateSignature(params, secretKey)
+                params['signature'] = Utils.generateSignature(params, secretKey)
 
                 request.url =
                     request.url?.split('?')[0] +
@@ -48,6 +48,3 @@ const API = ({ apiKey, secretKey }: { apiKey: string; secretKey: string }) => {
 }
 
 export default API
-function generateSignature(params: any, secretKey: string): any {
-    throw new Error('Function not implemented.')
-}
