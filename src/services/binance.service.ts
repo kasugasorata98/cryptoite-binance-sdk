@@ -177,7 +177,7 @@ class BinanceService {
 
     async subscribeTicker(
         callback: (err: Error | null, ticker: Ticker) => void
-    ) {
+    ): Promise<BinanceWs> {
         const tickerWs = new BinanceWs('!ticker@arr', this.api)
         tickerWs.subscribe(
             (data: Object) => {
@@ -203,6 +203,7 @@ class BinanceService {
             undefined,
             false
         )
+        return tickerWs
     }
 
     async subscribeAccount(

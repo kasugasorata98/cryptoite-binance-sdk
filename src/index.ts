@@ -10,9 +10,13 @@ dotenv.config()
 //     'v3A2kpJDXNhzNgLP8G9OfXywgjvTFZkyEMAYOaOl8IbGZ88ytAlhQhwv6aL0s9eW'
 
 // const binanceService = new BinanceService(apiKey, secretKey)
-// binanceService.subscribeTicker((ticker) => {
-//     //console.log(ticker)
-// })
+// binanceService
+//     .subscribeTicker((err, ticker) => {})
+//     .then((tickerWs) => {
+//         setTimeout(() => {
+//             tickerWs.closeWebsocket()
+//         }, 5000)
+//     })
 
 // binanceService.createListenKey().then((data) => {
 //     console.log(data)

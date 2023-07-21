@@ -150,6 +150,11 @@ class BinanceWs {
             throw err
         }
     }
+
+    closeWebsocket() {
+        this.reconnect = false
+        this.ws.close()
+    }
 }
 
 export default BinanceWs
