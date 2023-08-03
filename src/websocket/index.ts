@@ -40,15 +40,12 @@ class BinanceWs {
     }
 
     private handleSocketOpen(payload?: Object, listenKey?: string) {
-        console.log('Ws is open')
         if (payload) this.ws.send(JSON.stringify(payload))
         this.keepWsAliveTimer = setInterval(() => {
-            console.log('Keep Ws Alive Timer: ' + Date.now())
             this.ws.ping()
         }, 30 * 1000)
         if (listenKey) {
             this.keepListenKeyAliveTimer = setInterval(() => {
-                console.log('Keep Listen Key Alive Timer: ' + Date.now())
                 this.pingListenKey(listenKey).then((obj) => {
                     console.log(
                         `Listen Key [${listenKey}] has been refreshed: ${Date.now()}`
@@ -74,9 +71,7 @@ class BinanceWs {
     }
 
     private handleSocketHeartbeat(ping: Buffer) {
-        console.log(`Received heartbeat ${ping}`)
         this.ws.pong(ping)
-        console.log(`Sent heartbeat ${ping}`)
     }
 
     private handleSocketError(error: Error) {
