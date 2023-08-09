@@ -1,12 +1,12 @@
 export interface ExecutionReport {
-    e: 'executionReport' // Event type
-    E: number // Event time
-    s: string // Symbol
-    c: string // Client order ID
-    S: string // Side
-    o: string // Order type
-    f: string // Time in force
-    q: string // Order quantity
+    eventType: 'executionReport' // Event type
+    eventTime: number // Event time
+    symbol: string // Symbol
+    clientOrderID: string // Client order ID
+    side: string // Side
+    type: string // Order type
+    timeInForce: string // Time in force
+    quantity: string // Order quantity
     p: string // Order price
     P: string // Stop price
     F: string // Iceberg quantity
@@ -24,9 +24,9 @@ export interface ExecutionReport {
     T: number // Transaction time
     t: number // Trade ID
     I: number // Ignore
-    w: true // Is the order on the book?
-    m: false // Is this trade the maker side?
-    M: false // Ignore
+    w: boolean // Is the order on the book?
+    m: boolean // Is this trade the maker side?
+    M: boolean // Ignore
     O: number // Order creation time
     Z: string // Cumulative quote asset transacted quantity
     Y: string // Last quote asset transacted quantity (i.e. lastPrice * lastQty)
