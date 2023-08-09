@@ -1,12 +1,12 @@
 export interface ExecutionReport {
-    eventType: 'executionReport' // Event type
-    eventTime: number // Event time
-    symbol: string // Symbol
-    clientOrderID: string // Client order ID
-    side: string // Side
-    type: string // Order type
-    timeInForce: string // Time in force
-    quantity: string // Order quantity
+    e: 'executionReport' // Event type
+    E: number // Event time
+    s: string // Symbol
+    c: string // Client order ID
+    S: string // Side
+    o: string // Order type
+    f: string // Time in force
+    q: string // Order quantity
     p: string // Order price
     P: string // Stop price
     F: string // Iceberg quantity
