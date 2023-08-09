@@ -100,7 +100,6 @@ class BinanceService {
     async newMarketOrder({
         symbol,
         side,
-        type,
         quoteOrderQty,
         quantity,
     }: NewMarketOrderRequest): Promise<NewMarketOrderResponse> {
@@ -108,13 +107,15 @@ class BinanceService {
             let body: NewMarketOrderRequest = {
                 symbol,
                 side,
-                type,
             }
             if (quoteOrderQty) body['quoteOrderQty'] = quoteOrderQty
             if (quantity) body['quantity'] = quantity
             const { data } = await this.api.post<NewMarketOrderResponse>(
                 `api/v3/order?${new URLSearchParams(
-                    Utils.objectValuesToString(body)
+                    Utils.objectValuesToString({
+                        ...body,
+                        type: 'MARKET',
+                    })
                 )}`
             )
             return data
