@@ -208,10 +208,7 @@ class BinanceService {
     }
 
     async subscribeAccount(
-        callback: (
-            err: Error | null,
-            data?: OutboundAccountPosition | ExecutionReport
-        ) => void
+        callback: (data?: OutboundAccountPosition | ExecutionReport) => void
     ) {
         const tickerWs = new BinanceWs('', this.api)
         tickerWs.subscribe(
@@ -219,12 +216,10 @@ class BinanceService {
                 if (data['e'] === 'outboundAccountPosition') {
                     const outboundAccountPosition =
                         data as OutboundAccountPosition
-                    callback(null, outboundAccountPosition)
+                    callback(outboundAccountPosition)
                 } else if (data['e'] === 'executionReport') {
                     const executionReport = data as ExecutionReport
-                    callback(null, executionReport)
-                } else {
-                    callback(new Error('Event Type unknown'))
+                    callback(executionReport)
                 }
             },
             {
