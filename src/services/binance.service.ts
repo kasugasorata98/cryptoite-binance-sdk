@@ -102,11 +102,13 @@ class BinanceService {
         side,
         quoteOrderQty,
         quantity,
+        newClientOrderId,
     }: NewMarketOrderRequest): Promise<NewMarketOrderResponse> {
         try {
             let body: NewMarketOrderRequest = {
                 symbol,
                 side,
+                newClientOrderId,
             }
             if (quoteOrderQty) body['quoteOrderQty'] = quoteOrderQty
             if (quantity) body['quantity'] = quantity
@@ -131,6 +133,7 @@ class BinanceService {
         timeInForce,
         quantity,
         price,
+        newClientOrderId,
     }: NewLimitOrderRequest): Promise<NewLimitOrderResponse> {
         try {
             let body: NewLimitOrderRequest = {
@@ -140,6 +143,7 @@ class BinanceService {
                 timeInForce,
                 quantity,
                 price,
+                newClientOrderId,
             }
             const { data } = await this.api.post<NewLimitOrderResponse>(
                 `api/v3/order?${new URLSearchParams(

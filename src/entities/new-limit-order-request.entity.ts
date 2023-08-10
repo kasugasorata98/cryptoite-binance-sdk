@@ -7,4 +7,5 @@ export interface NewLimitOrderRequest {
     timeInForce: TimeInForce['value']
     quantity: number
     price: number
+    newClientOrderId?: string
 }

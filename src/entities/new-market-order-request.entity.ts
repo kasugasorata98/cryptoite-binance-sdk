@@ -3,4 +3,5 @@ export interface NewMarketOrderRequest {
     side: 'BUY' | 'SELL'
     quantity?: number
     quoteOrderQty?: number
+    newClientOrderId?: string
 }
