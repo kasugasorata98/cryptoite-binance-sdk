@@ -35,7 +35,7 @@ class BinanceService {
     }
 
     async getExchangeInfo(
-        symbols: string | Array<string>
+        symbols?: string | Array<string> | undefined
     ): Promise<ExchangeInfo> {
         if (typeof symbols === 'string') {
             symbols = [symbols]
@@ -46,7 +46,11 @@ class BinanceService {
         const url = symbols
             ? `/api/v3/exchangeInfo?symbols=${symbols}`
             : '/api/v3/exchangeInfo'
-        const res = await this.api.get(url)
+        const res = await this.api.get(url, {
+            headers: {
+                skipSignature: true,
+            },
+        })
         const exchangeInfo: ExchangeInfo = {
             ...res.data,
             symbols: {},
