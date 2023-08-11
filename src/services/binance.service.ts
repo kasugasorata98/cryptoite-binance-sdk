@@ -133,7 +133,6 @@ class BinanceService {
     async newLimitOrder({
         symbol,
         side,
-        type,
         timeInForce,
         quantity,
         price,
@@ -143,7 +142,7 @@ class BinanceService {
             let body: NewLimitOrderRequest = {
                 symbol: symbol,
                 side,
-                type,
+                type: 'LIMIT',
                 timeInForce,
                 quantity,
                 price,

@@ -1,7 +1,5 @@
 import { AxiosResponseHeaders, RawAxiosResponseHeaders } from 'axios'
 import CryptoJS from 'crypto-js'
-import { Object } from '../entities/object.entity'
-import { OutboundAccountPosition } from '../entities/outbound-account-position.entity'
 
 const Utils = {
     roundStep: (qty: number, stepSize: string) => {
