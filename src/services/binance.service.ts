@@ -142,7 +142,6 @@ class BinanceService {
             let body: NewLimitOrderRequest = {
                 symbol: symbol,
                 side,
-                type: 'LIMIT',
                 timeInForce,
                 quantity,
                 price,
@@ -150,7 +149,10 @@ class BinanceService {
             }
             const { data } = await this.api.post<NewLimitOrderResponse>(
                 `api/v3/order?${new URLSearchParams(
-                    Utils.objectValuesToString(body)
+                    Utils.objectValuesToString({
+                        ...body,
+                        type: 'LIMIT',
+                    })
                 )}`
             )
             return data
