@@ -13,21 +13,16 @@ dotenv.config()
 // binanceService.getExchangeInfo().then((data) => {
 //     console.log(data)
 // })
-// binanceService
-//     .subscribeTicker((err, ticker) => {})
-//     .then((tickerWs) => {
-//         setTimeout(() => {
-//             tickerWs.closeWebsocket()
-//         }, 5000)
-//     })
+// binanceService.subscribeTicker((err, ticker) => {
+//     console.log(ticker)
+// })
 
 // binanceService.createListenKey().then((data) => {
 //     console.log(data)
 //     binanceService.closeListenKey(data)
 // })
 
-// binanceService.subscribeAccount((err, data) => {
-//     if (err) return
+// binanceService.subscribeAccount((data) => {
 //     console.log(data)
 // })
 

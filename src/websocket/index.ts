@@ -22,13 +22,29 @@ class BinanceWs {
             throw new Error(
                 'A WebSocket is already initalized in this instance. To create another, please create a new instance.'
             )
+
         let listenKey: string = ''
         if (useListenKey) {
-            listenKey = await this.createListenKey()
+            try {
+                listenKey = await this.createListenKey()
+            } catch (err) {
+                console.log(err)
+                setTimeout(() => {
+                    this.subscribe(
+                        callback,
+                        payload,
+                        useListenKey,
+                        isReconnectAttempt
+                    )
+                }, 1000)
+                return
+            }
         }
         this.ws = new WebSocket(`${wsBaseUrl}/${listenKey || this.endpoint}`)
 
-        this.ws.on('open', () => this.handleSocketOpen(payload, listenKey))
+        this.ws.on('open', () =>
+            this.handleSocketOpen(payload, listenKey, isReconnectAttempt)
+        )
         this.ws.on('message', (data) =>
             this.handleMessageReceived(data, callback)
         )
@@ -39,7 +55,12 @@ class BinanceWs {
         )
     }
 
-    private handleSocketOpen(payload?: Object, listenKey?: string) {
+    private handleSocketOpen(
+        payload?: Object,
+        listenKey?: string,
+        isReconnectAttempt: boolean = false
+    ) {
+        if (isReconnectAttempt) console.log('Reconnected')
         if (payload) this.ws.send(JSON.stringify(payload))
         this.keepWsAliveTimer = setInterval(() => {
             this.ws.ping()
