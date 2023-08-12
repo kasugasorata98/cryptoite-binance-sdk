@@ -46,11 +46,15 @@ class BinanceWs {
         }, 30 * 1000)
         if (listenKey) {
             this.keepListenKeyAliveTimer = setInterval(() => {
-                this.pingListenKey(listenKey).then((obj) => {
-                    console.log(
-                        `Listen Key [${listenKey}] has been refreshed: ${Date.now()}`
-                    )
-                })
+                this.pingListenKey(listenKey)
+                    .then((obj) => {
+                        console.log(
+                            `Listen Key [${listenKey}] has been refreshed: ${Date.now()}`
+                        )
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
             }, 60 * 1000 * 30)
         }
     }
