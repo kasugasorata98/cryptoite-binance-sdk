@@ -60,7 +60,7 @@ class BinanceService {
                 status: obj.status,
             }
             for (let filter of obj.filters) {
-                if (filter.filterType == 'MIN_NOTIONAL') {
+                if (filter.filterType == 'NOTIONAL') {
                     filters.minNotional = filter.minNotional
                 } else if (filter.filterType == 'PRICE_FILTER') {
                     filters.minPrice = filter.minPrice
