@@ -175,7 +175,7 @@ class BinanceService {
             if (origClientOrderId) body['origClientOrderId'] = origClientOrderId
             if (newClientOrderId) body['newClientOrderId'] = newClientOrderId
             const { data } = await this.api.delete<Array<CancelOrderResponse>>(
-                `api/v3/openOrders?${new URLSearchParams(
+                `api/v3/order?${new URLSearchParams(
                     Utils.objectValuesToString(body)
                 )}`
             )
