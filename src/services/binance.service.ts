@@ -166,7 +166,7 @@ class BinanceService {
         orderId,
         origClientOrderId,
         newClientOrderId,
-    }: CancelOrderRequest): Promise<Array<CancelOrderResponse>> {
+    }: CancelOrderRequest): Promise<CancelOrderResponse> {
         try {
             let body: CancelOrderRequest = {
                 symbol,
@@ -174,7 +174,7 @@ class BinanceService {
             if (orderId) body['orderId'] = orderId
             if (origClientOrderId) body['origClientOrderId'] = origClientOrderId
             if (newClientOrderId) body['newClientOrderId'] = newClientOrderId
-            const { data } = await this.api.delete<Array<CancelOrderResponse>>(
+            const { data } = await this.api.delete<CancelOrderResponse>(
                 `api/v3/order?${new URLSearchParams(
                     Utils.objectValuesToString(body)
                 )}`
