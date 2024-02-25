@@ -10,6 +10,29 @@ dotenv.config()
 //     'v3A2kpJDXNhzNgLP8G9OfXywgjvTFZkyEMAYOaOl8IbGZ88ytAlhQhwv6aL0s9eW'
 
 // const binanceService = new BinanceService(apiKey, secretKey)
+// 25087162647
+// binanceService
+//     .cancelOpenOrders({
+//         symbol: 'BTCUSDT',
+//     })
+//     .then((res) => {
+//         console.log(res)
+//     })
+//     .catch((err) => {
+//         console.log(err)
+//     })
+// binanceService
+//     .newLimitOrder({
+//         symbol: 'BTCUSDT',
+//         side: 'BUY',
+//         price: 20000,
+//         quantity: 0.0005,
+//         timeInForce: 'GTC',
+//         newClientOrderId: 'testing123',
+//     })
+//     .then((res) => {
+//         console.log(res)
+//     })
 // binanceService.getExchangeInfo().then((data) => {
 //     console.log(data)
 // })

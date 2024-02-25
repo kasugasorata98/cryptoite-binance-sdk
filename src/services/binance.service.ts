@@ -185,6 +185,21 @@ class BinanceService {
         }
     }
 
+    async cancelOpenOrders({
+        symbol,
+    }: CancelOrderRequest): Promise<Array<CancelOrderRequest>> {
+        try {
+            const { data } = await this.api.delete<Array<CancelOrderRequest>>(
+                `api/v3/openOrders?${new URLSearchParams({
+                    symbol,
+                })}`
+            )
+            return data
+        } catch (err) {
+            throw err
+        }
+    }
+
     async subscribeTicker(
         callback: (err: Error | null, ticker: Ticker) => void
     ): Promise<BinanceWs> {
