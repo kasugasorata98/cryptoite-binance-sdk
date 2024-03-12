@@ -233,7 +233,7 @@ class BinanceService {
 
     async subscribeAccount(
         callback: (data?: OutboundAccountPosition | ExecutionReport) => void
-    ) {
+    ): Promise<BinanceWs> {
         const tickerWs = new BinanceWs('', this.api)
         tickerWs.subscribe(
             (data: Object) => {
@@ -253,6 +253,7 @@ class BinanceService {
             },
             true
         )
+        return tickerWs
     }
 }
 
